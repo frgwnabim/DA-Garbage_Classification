@@ -276,7 +276,8 @@ section.block + section.block { border-top: 1px solid var(--border); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } html { scroll-behavior: auto; } }
 .input-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px; }
-.input-actions .btn { flex: 1 1 150px; }
+.input-actions .btn { flex: 1 1 130px; white-space: nowrap; }
+@media (max-width: 420px) { .input-actions .btn { padding: 11px 12px; } }
 
 .samples-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px; }
 .samples-head h3 { font-size: 0.95rem; margin: 0; }
