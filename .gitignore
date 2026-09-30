@@ -1,0 +1,16 @@
+# Dataset dan hasil training (besar, tidak di-commit)
+data/
+checkpoints/*
+!checkpoints/.gitkeep
+
+# Environment
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Editor dan OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

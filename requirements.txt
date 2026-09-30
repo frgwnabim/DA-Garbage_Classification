@@ -1,0 +1,23 @@
+# PyTorch versi CUDA 13.2 (RTX 4060, Windows). Wheel diambil dari index resmi PyTorch,
+# supaya tidak terpasang versi CPU dari PyPI.
+--extra-index-url https://download.pytorch.org/whl/cu132
+torch==2.14.0+cu132
+torchvision==0.29.0+cu132
+
+# Data dan visualisasi
+numpy==2.5.2
+pandas==3.0.6
+matplotlib==3.11.2
+seaborn==0.13.2
+scikit-learn==1.9.1
+pillow==12.3.0
+tqdm==4.70.1
+
+# Notebook
+jupyter==1.1.1
+ipykernel==7.4.0
+
+# Export model dan interpretasi
+onnx==1.23.1
+onnxruntime==1.30.0
+grad-cam==1.5.7
