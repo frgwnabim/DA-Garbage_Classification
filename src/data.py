@@ -28,6 +28,9 @@ def set_seed(seed=SEED):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+    # cuDNN deterministik: sedikit lebih lambat, tapi hasil training bisa diulang
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 def get_classes(data_dir):
@@ -150,7 +153,12 @@ def compute_class_weights(items, classes):
 
 
 def make_dataloaders(data_dir, splits, classes, batch_size=BATCH_SIZE, num_workers=0, seed=SEED):
-    """Buat DataLoader train/val/test. num_workers=0 default karena lebih stabil di notebook Windows."""
+    """Buat DataLoader train/val/test.
+
+    num_workers=0 default karena lebih stabil di notebook Windows. Kalau num_workers > 0,
+    worker dibuat sekali lalu dipakai ulang (persistent_workers) supaya tidak ada biaya
+    start ulang proses di setiap epoch.
+    """
     generator = torch.Generator().manual_seed(seed)
     loaders = {}
     for name, items in splits.items():
@@ -162,6 +170,7 @@ def make_dataloaders(data_dir, splits, classes, batch_size=BATCH_SIZE, num_worke
             shuffle=is_train,
             num_workers=num_workers,
             pin_memory=torch.cuda.is_available(),
+            persistent_workers=num_workers > 0,
             generator=generator if is_train else None,
         )
     return loaders
