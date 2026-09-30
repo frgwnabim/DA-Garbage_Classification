@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Klasifikasi Sampah | Deep Learning di Browser</title>
+  <meta name="description" content="Model deep learning (MobileNetV2) yang mengenali 6 jenis sampah dari foto, berjalan langsung di browser. Proyek portofolio dengan alur CRISP-DM.">
+  <meta name="theme-color" content="#1d7a4b">
+  <meta property="og:title" content="Klasifikasi Sampah dengan Deep Learning">
+  <meta property="og:description" content="Coba model yang mengenali kardus, kaca, logam, kertas, plastik, dan residu dari satu foto, langsung di browser.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d7a4b'/%3E%3Cpath d='M9 22c0-8 6-13 15-13-1 9-6 14-13 14' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M9 23c3-5 6-7 9-8' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preload" href="models/garbage_classifier.onnx" as="fetch" crossorigin>
+</head>
+<body>
+  <a class="visually-hidden" href="#demo">Langsung ke demo</a>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top" aria-label="Klasifikasi Sampah, kembali ke atas">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 18c0-7 5-11 13-11-1 8-5 12-11 12"/><path d="M5 19c2.5-4.5 5-6 8-7"/></svg></span>
+        <span>Klasifikasi Sampah</span>
+      </a>
+      <nav class="nav-links" aria-label="Navigasi bagian">
+        <a href="#demo">Demo</a>
+        <a href="#masalah">Masalah</a>
+        <a href="#dataset">Dataset</a>
+        <a href="#pendekatan">Pendekatan</a>
+        <a href="#hasil">Hasil</a>
+        <a href="#kesimpulan">Kesimpulan</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Ganti tema terang atau gelap">
+        <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ======================================================= HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow"><span class="chip">Deep Learning</span> Computer vision &middot; CRISP-DM</div>
+        <h1>Memilah sampah cukup dengan <span class="accent">satu foto</span></h1>
+        <p class="hero-lead">Pemilahan sampah di Indonesia masih banyak dilakukan manual, lambat, dan sering salah, padahal daur ulang butuh sampah yang sudah terpilah. Model ini mengenali 6 jenis sampah dari foto dan berjalan langsung di browser Anda.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#demo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4V8Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+            Coba model
+          </a>
+          <a class="btn btn-secondary" href="#hasil">Lihat hasil analisis</a>
+        </div>
+        <div class="kpis" aria-label="Ringkasan hasil">
+          <div class="kpi">
+            <div class="kpi-label">Akurasi di test set</div>
+            <div class="kpi-value" id="kpi-acc">89,2%</div>
+            <div class="kpi-note">379 foto yang belum pernah dilihat model</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Macro F1</div>
+            <div class="kpi-value" id="kpi-f1">0,868</div>
+            <div class="kpi-note">target di atas 0,85 tercapai</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Ukuran model</div>
+            <div class="kpi-value" id="kpi-size">8,7 MB</div>
+            <div class="kpi-note">MobileNetV2, format ONNX</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Waktu inference</div>
+            <div class="kpi-value" id="kpi-speed">±10 ms</div>
+            <div class="kpi-note" id="kpi-speed-note">CPU laptop, per foto</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= DEMO -->
+    <section class="demo" id="demo" aria-labelledby="demo-title">
+      <div class="container">
+        <div class="demo-shell">
+          <div class="demo-top">
+            <h2 id="demo-title">Coba model</h2>
+            <div class="model-status" id="model-status" role="status" aria-live="polite">
+              <span class="dot"></span>
+              <span id="model-status-text">Memuat model...</span>
+              <span class="progress" aria-hidden="true"><span id="model-progress"></span></span>
+            </div>
+          </div>
+          <div class="demo-grid">
+            <div>
+              <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Area unggah foto. Klik atau seret gambar ke sini">
+                <div class="dropzone-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>
+                  <strong>Seret foto sampah ke sini</strong>
+                  <span class="small">atau pakai tombol di bawah. Foto diproses di perangkat Anda dan tidak diunggah ke mana pun.</span>
+                </div>
+                <div class="processing" id="processing" aria-hidden="true"><div><div class="spinner"></div>Memproses gambar...</div></div>
+              </div>
+              <div class="input-actions">
+                <button class="btn btn-primary" id="btn-upload" type="button" data-needs-model disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+                  Unggah foto
+                </button>
+                <button class="btn btn-secondary" id="btn-camera" type="button" data-needs-model disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4V8Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+                  Ambil foto
+                </button>
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <input type="file" id="camera-input" accept="image/*" capture="environment" hidden>
+              </div>
+              <div class="samples-head">
+                <h3>Atau pilih contoh gambar</h3>
+                <span class="small muted">dari test set, 2 per kelas</span>
+              </div>
+              <div class="samples" id="samples" aria-label="Contoh gambar"></div>
+            </div>
+            <div class="result" id="result" aria-live="polite">
+              <div class="result-empty">
+                <div>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+                  <p style="margin:0">Hasil prediksi, 3 kategori teratas, dan cara membuang sampahnya akan muncul di sini.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= MASALAH -->
+    <section class="block" id="masalah" aria-labelledby="masalah-title">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">1. Business understanding</div>
+          <h2 id="masalah-title">Masalah dan tujuan</h2>
+          <p>Indonesia menghasilkan puluhan juta ton sampah setiap tahun, dan banyak yang berakhir di TPA dalam keadaan tercampur. Pemilahan masih bergantung pada tenaga manusia di rumah tangga, TPS, dan bank sampah: lambat, melelahkan, dan sering salah karena tidak semua orang tahu cara membedakan jenis material. Padahal industri daur ulang membutuhkan sampah yang sudah terpilah per jenis. Sampah yang tercampur nilainya turun dan sulit diolah.</p>
+          <p><strong>Tujuan:</strong> membangun model yang mengklasifikasikan foto sampah ke 6 kategori (kardus, kaca, logam, kertas, plastik, residu) sebagai dasar sistem pemilahan otomatis atau aplikasi edukasi pemilahan sampah.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card question"><span class="qn">1</span><div><h3>Seberapa akurat dengan data terbatas?</h3><p>Hanya sekitar 2.500 foto untuk 6 kelas. Apakah cukup untuk model yang andal?</p></div></div>
+          <div class="card question"><span class="qn">2</span><div><h3>Seberapa besar untungnya transfer learning?</h3><p>Dibandingkan CNN yang dilatih dari nol dengan data yang sama.</p></div></div>
+          <div class="card question"><span class="qn">3</span><div><h3>Kelas mana yang paling sering tertukar?</h3><p>Dan kenapa model bingung di pasangan kelas tersebut.</p></div></div>
+          <div class="card question"><span class="qn">4</span><div><h3>Model mana yang cocok untuk aplikasi nyata?</h3><p>Menimbang akurasi, ukuran file, dan kecepatan, karena model dijalankan di browser.</p></div></div>
+        </div>
+        <p class="insight">Kriteria sukses: macro F1 di test set di atas 0,85, tidak ada kelas dengan F1 di bawah 0,70, dan model di bawah 30 MB. Macro F1 dipakai (bukan hanya akurasi) karena datanya tidak seimbang: macro F1 menghitung setiap kelas sama penting, sehingga kelas kecil seperti residu tidak bisa diabaikan.</p>
+      </div>
+    </section>
+
+    <!-- ======================================================= DATASET -->
+    <section class="block" id="dataset" aria-labelledby="dataset-title">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">2 dan 3. Data understanding dan preparation</div>
+          <h2 id="dataset-title">Dataset</h2>
+          <p>Dataset TrashNet berisi foto satu objek sampah di atas latar polos, difoto dalam ruangan dengan resolusi seragam 512 x 384 piksel. Enam pasang file ternyata identik tetapi punya label berbeda (misalnya leher botol kaca yang juga ada di folder logam), sehingga dibuang sebelum data dibagi.</p>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="v">2.527</div><div class="l">foto asli</div></div>
+          <div class="stat"><div class="v">2.521</div><div class="l">setelah 6 duplikat dibuang</div></div>
+          <div class="stat"><div class="v">70/15/15</div><div class="l">split train/val/test (stratified)</div></div>
+          <div class="stat"><div class="v">4,3 : 1</div><div class="l">rasio kelas terbanyak vs tersedikit</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card chart-card">
+            <h3>Distribusi kelas</h3>
+            <p class="chart-sub">Kertas paling banyak (594), residu paling sedikit (137). Arahkan kursor untuk melihat pembagian per split.</p>
+            <div class="chart" id="chart-dataset"><div class="chart-loading">Memuat chart...</div></div>
+            <p class="insight">Karena tidak seimbang, saat training kesalahan pada kelas kecil diberi bobot lebih besar (class weights). Residu mendapat bobot sekitar 3 kali rata-rata.</p>
+          </div>
+          <div class="card stack">
+            <div>
+              <h3>Contoh foto</h3>
+              <div class="dataset-samples">
+                <figure><img src="assets/samples/cardboard_2.jpg" alt="Contoh kardus" loading="lazy" width="400" height="300"><figcaption><span class="swatch" style="background:var(--c-cardboard)"></span>Kardus</figcaption></figure>
+                <figure><img src="assets/samples/glass_1.jpg" alt="Contoh kaca" loading="lazy" width="400" height="300"><figcaption><span class="swatch" style="background:var(--c-glass)"></span>Kaca</figcaption></figure>
+                <figure><img src="assets/samples/metal_1.jpg" alt="Contoh logam" loading="lazy" width="400" height="300"><figcaption><span class="swatch" style="background:var(--c-metal)"></span>Logam</figcaption></figure>
+                <figure><img src="assets/samples/paper_1.jpg" alt="Contoh kertas" loading="lazy" width="400" height="300"><figcaption><span class="swatch" style="background:var(--c-paper)"></span>Kertas</figcaption></figure>
+                <figure><img src="assets/samples/plastic_1.jpg" alt="Contoh plastik" loading="lazy" width="400" height="300"><figcaption><span class="swatch" style="background:var(--c-plastic)"></span>Plastik</figcaption></figure>
+                <figure><img src="assets/samples/trash_1.jpg" alt="Contoh residu" loading="lazy" width="400" height="300"><figcaption><span class="swatch" style="background:var(--c-trash)"></span>Residu</figcaption></figure>
+              </div>
+            </div>
+            <div>
+              <h3>Keterbatasan yang terlihat</h3>
+              <ul class="lead-list">
+                <li><strong>Latar seragam dan pencahayaan studio.</strong> Tempat sampah sungguhan jauh lebih ramai dan kotor.</li>
+                <li><strong>Satu objek per foto</strong>, bersih dan utuh.</li>
+                <li><strong>Data kecil</strong>, terutama residu yang hanya 137 foto dengan isi sangat beragam.</li>
+                <li><strong>Produk luar negeri.</strong> Kemasannya bisa berbeda dari sampah lokal Indonesia.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= PENDEKATAN -->
+    <section class="block" id="pendekatan" aria-labelledby="pendekatan-title">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">4. Modeling</div>
+          <h2 id="pendekatan-title">Pendekatan: transfer learning</h2>
+          <p>Melatih model dari nol butuh jutaan foto. Transfer learning memakai model yang sudah belajar "cara melihat" dari 1,2 juta foto ImageNet, lalu mengajarinya membedakan jenis sampah. Ibaratnya seperti koki berpengalaman yang tinggal mempelajari resep baru, bukan belajar memasak dari awal.</p>
+        </div>
+        <div class="tl-diagram" role="img" aria-label="Diagram tiga tahap transfer learning: model pretrained ImageNet, lalu feature extraction, lalu fine-tuning">
+          <div class="tl-step">
+            <span class="tl-num">Titik awal</span>
+            <h3>Model pretrained ImageNet</h3>
+            <div class="layers">
+              <div class="layer pre">Blok awal: tepi dan warna</div>
+              <div class="layer pre">Blok tengah: tekstur dan pola</div>
+              <div class="layer pre">Blok akhir: bagian objek</div>
+              <div class="layer pre head">Classifier 1.000 kelas</div>
+            </div>
+            <p>Sudah pandai mengenali kucing, mobil, dan ribuan benda lain, tetapi belum tahu apa itu "kardus" atau "residu".</p>
+          </div>
+          <div class="tl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="tl-step">
+            <span class="tl-num">Tahap 1</span>
+            <h3>Feature extraction</h3>
+            <div class="layers">
+              <div class="layer frozen">Blok awal <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+              <div class="layer frozen">Blok tengah <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+              <div class="layer frozen">Blok akhir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+              <div class="layer train head">Classifier baru 6 kelas</div>
+            </div>
+            <p>Semua blok dibekukan. Hanya classifier baru yang dilatih (learning rate 1e-3), supaya bobot acaknya tidak merusak pengetahuan yang sudah ada.</p>
+          </div>
+          <div class="tl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="tl-step">
+            <span class="tl-num">Tahap 2</span>
+            <h3>Fine-tuning</h3>
+            <div class="layers">
+              <div class="layer frozen">Blok awal <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+              <div class="layer frozen">Blok tengah <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+              <div class="layer train">Blok akhir disetel ulang</div>
+              <div class="layer train head">Classifier 6 kelas</div>
+            </div>
+            <p>Blok terakhir dibuka dan disetel halus dengan learning rate 10 kali lebih kecil (1e-4), supaya menyesuaikan diri ke tekstur sampah tanpa melupakan ImageNet.</p>
+          </div>
+        </div>
+        <div class="tl-legend">
+          <span><i style="background:color-mix(in srgb, var(--c-metal) 14%, var(--surface))"></i>Bobot dari ImageNet</span>
+          <span><i style="background:var(--surface-3)"></i>Dibekukan (tidak dilatih)</span>
+          <span><i style="background:var(--brand-soft)"></i>Dilatih dengan foto sampah</span>
+        </div>
+
+        <h3 style="margin-top:36px">Tiga model yang dibandingkan</h3>
+        <div class="grid-3">
+          <div class="card model-card">
+            <h3><span class="swatch" style="background:var(--m-a)"></span>A. CNN dari nol</h3>
+            <p class="small muted" style="margin:0">Baseline, 1,2 juta parameter</p>
+            <ul><li>4 blok konvolusi, semua bobot mulai dari acak</li><li>Menunjukkan batas kemampuan tanpa pengetahuan awal</li></ul>
+          </div>
+          <div class="card model-card">
+            <h3><span class="swatch" style="background:var(--m-b)"></span>B. MobileNetV2 <span class="chip tag">terpilih</span></h3>
+            <p class="small muted" style="margin:0">Pretrained, 2,2 juta parameter</p>
+            <ul><li>Dirancang untuk HP dan perangkat ringan</li><li>Fine-tuning 5 blok terakhir</li></ul>
+          </div>
+          <div class="card model-card">
+            <h3><span class="swatch" style="background:var(--m-c)"></span>C. ResNet50</h3>
+            <p class="small muted" style="margin:0">Pretrained, 23,5 juta parameter</p>
+            <ul><li>Model besar sebagai pembanding "batas atas"</li><li>Fine-tuning blok terakhir (layer4)</li></ul>
+          </div>
+        </div>
+        <p class="insight">Pengaturan yang sama untuk semua model: augmentasi (crop acak, flip, rotasi kecil, variasi cahaya), class weights, optimizer AdamW, learning rate yang otomatis diturunkan saat stagnan, early stopping, dan mixed precision di GPU RTX 4060.</p>
+      </div>
+    </section>
+
+    <!-- ======================================================= HASIL -->
+    <section class="block" id="hasil" aria-labelledby="hasil-title">
+      <div class="container stack">
+        <div class="section-head">
+          <div class="section-kicker">5. Evaluation</div>
+          <h2 id="hasil-title">Hasil</h2>
+          <p>Semua angka di bawah berasal dari <strong>test set</strong>: 379 foto yang tidak dipakai sama sekali selama training maupun saat memilih model, sehingga menjadi perkiraan paling jujur untuk foto baru.</p>
+        </div>
+
+        <div class="card chart-card">
+          <h3>Perbandingan tiga model</h3>
+          <p class="chart-sub">Transfer learning (B dan C) unggul jauh dari CNN dari nol. MobileNetV2 hampir setara ResNet50 dengan ukuran 10 kali lebih kecil.</p>
+          <div class="chart" id="chart-models"><div class="chart-loading">Memuat chart...</div></div>
+          <div class="table-wrap" style="margin-top:8px">
+            <table>
+              <thead><tr><th>Model</th><th class="n">Accuracy</th><th class="n">Macro F1</th><th class="n">Parameter</th><th class="n">Ukuran</th><th class="n">GPU / foto</th><th class="n">CPU / foto</th></tr></thead>
+              <tbody id="model-table-body"></tbody>
+            </table>
+          </div>
+          <p class="small muted" style="margin:8px 0 0">Waktu inference diukur di laptop pengembangan (batch 1, float32) dan sedikit berubah setiap kali diukur.</p>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-head">
+            <div>
+              <h3>Kurva training</h3>
+              <p class="chart-sub">Garis tebal: validation. Garis putus-putus: train. Pilih model yang ingin ditampilkan.</p>
+            </div>
+            <div class="toggle-group" role="group" aria-label="Pilih model">
+              <button class="toggle" type="button" data-model-toggle="A" aria-pressed="true"><span class="swatch" style="background:var(--m-a)"></span>CNN dari nol</button>
+              <button class="toggle" type="button" data-model-toggle="B" aria-pressed="true"><span class="swatch" style="background:var(--m-b)"></span>MobileNetV2</button>
+              <button class="toggle" type="button" data-model-toggle="C" aria-pressed="true"><span class="swatch" style="background:var(--m-c)"></span>ResNet50</button>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div><h4 class="small muted" style="margin:6px 0 0">Loss (lebih rendah lebih baik)</h4><div class="chart" id="chart-loss"><div class="chart-loading">Memuat chart...</div></div></div>
+            <div><h4 class="small muted" style="margin:6px 0 0">Accuracy</h4><div class="chart" id="chart-acc"><div class="chart-loading">Memuat chart...</div></div></div>
+          </div>
+          <p class="insight">CNN dari nol belajar lambat dan berhenti di akurasi validation sekitar 0,71 (underfitting). Model pretrained langsung melampaui 0,8 sejak tahap 1 dan naik lagi setelah fine-tuning. Setelah itu akurasi train terus naik mendekati 1 sementara validation tertahan, tanda overfitting ringan, dan early stopping memilih epoch terbaik sebelum itu terjadi.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="chart-head">
+              <div>
+                <h3>Confusion matrix</h3>
+                <p class="chart-sub">MobileNetV2 di test set. Baris: label asli, kolom: prediksi.</p>
+              </div>
+              <div class="toggle-group" role="group" aria-label="Tampilan confusion matrix">
+                <button class="toggle" type="button" data-cm-mode="normalized" aria-pressed="true">Persentase</button>
+                <button class="toggle" type="button" data-cm-mode="counts" aria-pressed="false">Jumlah</button>
+              </div>
+            </div>
+            <div class="chart tall" id="chart-cm"><div class="chart-loading">Memuat chart...</div></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Metrik per kelas</h3>
+            <p class="chart-sub">Batang: F1 per kelas. Titik: precision dan recall.</p>
+            <div class="chart tall" id="chart-perclass"><div class="chart-loading">Memuat chart...</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Kelas yang paling sering tertukar</h3>
+          <div class="grid-3" style="margin-top:12px">
+            <div class="answer"><h3>Kardus dan kertas</h3><p>6 kardus ditebak kertas, 3 kertas ditebak kardus. Kardus tipis dan kotak kemasan bercetak permukaannya mirip kertas tebal, sementara lapisan bergelombang khas kardus sering tidak terlihat dari sudut foto.</p></div>
+            <div class="answer"><h3>Plastik ke kaca</h3><p>6 plastik ditebak kaca. Botol dan wadah plastik bening sama-sama transparan dan memantulkan cahaya seperti kaca, apalagi botol plastik berwarna hijau.</p></div>
+            <div class="answer"><h3>Residu ke mana-mana</h3><p>Residu adalah kelas terlemah (F1 0,70). Isinya campuran bungkus beraluminium, sachet kertas, dan plastik, sehingga mirip kelas lain, dan datanya paling sedikit.</p></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Grad-CAM: apa yang dilihat model?</h3>
+            <p class="chart-sub">Area merah paling memengaruhi keputusan model. Kolom kiri dan tengah: prediksi benar, kolom kanan: prediksi salah.</p>
+            <figure class="figure">
+              <div class="scroll-figure"><a href="assets/img/gradcam_examples.jpg" target="_blank" rel="noopener"><img src="assets/img/gradcam_examples.jpg" alt="Heatmap Grad-CAM untuk 2 prediksi benar dan 1 prediksi salah dari setiap kelas" loading="lazy" width="1109" height="2193"></a></div>
+              <figcaption>Klik gambar untuk ukuran penuh. Gulir di dalam kotak untuk melihat semua kelas.</figcaption>
+            </figure>
+            <p class="insight">Model melihat objek sampahnya, bukan background: leher botol, badan kaleng, lipatan bungkus. Secara kuantitatif, perhatian model di tepi gambar (area background) selalu di bawah rata-rata untuk semua kelas. Saat salah pun, model tetap melihat objek, hanya bagian yang dilihat menyesatkan, misalnya tulisan tercetak pada kardus yang mirip kertas.</p>
+          </div>
+          <div class="card">
+            <h3>Contoh salah prediksi</h3>
+            <p class="chart-sub">41 dari 379 foto test (10,8%) salah ditebak, diurutkan dari yang paling "yakin".</p>
+            <figure class="figure">
+              <a href="assets/img/misclassified_examples.jpg" target="_blank" rel="noopener"><img src="assets/img/misclassified_examples.jpg" alt="Grid foto test yang salah ditebak beserta label asli, prediksi, dan confidence" loading="lazy" width="1600" height="1385"></a>
+              <figcaption>Klik gambar untuk ukuran penuh.</figcaption>
+            </figure>
+            <ol class="error-groups" style="margin-top:14px">
+              <li><div><strong>Material transparan:</strong> plastik bening dan kaca saling tertukar.</div></li>
+              <li><div><strong>Kardus tipis vs kertas:</strong> kotak kemasan putih yang tidak memperlihatkan lapisan bergelombang.</div></li>
+              <li><div><strong>Permukaan mengilap:</strong> dasar botol gelap, bungkus foil, dan kaleng penyok bercetak warna-warni.</div></li>
+              <li><div><strong>Objek kecil atau terpotong:</strong> petunjuk bentuk hilang.</div></li>
+              <li><div><strong>Label yang diragukan:</strong> misalnya tutup toples logam yang dilabeli kaca.</div></li>
+            </ol>
+            <p class="insight">Median confidence prediksi salah hanya 0,71, jauh di bawah prediksi benar (0,99). Karena itu demo di atas memberi peringatan saat model kurang yakin.</p>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <h3>Uji ketahanan</h3>
+          <p class="chart-sub">Foto test diberi gangguan buatan untuk meniru kondisi nyata. Arahkan kursor untuk melihat berapa poin akurasinya turun.</p>
+          <div class="chart" id="chart-robust"><div class="chart-loading">Memuat chart...</div></div>
+          <div class="grid-3" style="margin-top:8px">
+            <div class="answer"><h3>Gelap: aman</h3><p>Model pretrained hanya turun 1 sampai 2,5 poin, bahkan di kecerahan 35%. CNN dari nol runtuh sampai 51 poin karena bergantung pada warna dan kecerahan.</p></div>
+            <div class="answer"><h3>Blur: titik lemah</h3><p>Blur berat menurunkan akurasi MobileNetV2 26,6 poin (ResNet50 12,1 poin). Tekstur seperti serat kardus dan kilap kaca hilang saat foto buram.</p></div>
+            <div class="answer"><h3>Rotasi: aman</h3><p>Turun kurang dari 3,5 poin, karena sampah memang tidak punya orientasi tetap dan augmentasi sudah memasukkan rotasi.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= KESIMPULAN -->
+    <section class="block" id="kesimpulan" aria-labelledby="kesimpulan-title">
+      <div class="container stack">
+        <div class="section-head">
+          <div class="section-kicker">6. Kesimpulan dan deployment</div>
+          <h2 id="kesimpulan-title">Kesimpulan</h2>
+          <p>Model terpilih, MobileNetV2, di-export ke ONNX (8,7 MB) dan dijalankan dengan onnxruntime-web. Prediksinya di browser identik dengan PyTorch, karena preprocessing di halaman ini meniru preprocessing saat training secara persis.</p>
+        </div>
+        <div class="grid-2">
+          <div class="answer"><h3>1. Seberapa akurat dengan data terbatas?</h3><p>Dengan sekitar 1.760 foto training, akurasi test 89,2% dan macro F1 0,868. Sekitar 9 dari 10 foto dikenali dengan benar, selama kondisi fotonya mirip dataset.</p></div>
+          <div class="answer"><h3>2. Seberapa besar untungnya transfer learning?</h3><p>Sangat besar: macro F1 naik sekitar 20 poin (0,666 menjadi 0,868) dan jumlah kesalahan turun hampir 3 kali, dengan waktu training lebih singkat.</p></div>
+          <div class="answer"><h3>3. Kelas mana yang paling sering tertukar?</h3><p>Kardus dengan kertas (permukaan mirip) dan plastik dengan kaca (sama-sama transparan). Residu paling lemah karena isinya campuran dan datanya sedikit.</p></div>
+          <div class="answer"><h3>4. Model mana yang cocok untuk aplikasi nyata?</h3><p>MobileNetV2: performa setara ResNet50 (selisih macro F1 di bawah 0,01) dengan ukuran 10 kali lebih kecil dan inference di CPU beberapa kali lebih cepat.</p></div>
+        </div>
+
+        <div class="card">
+          <h3>Kriteria sukses</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Kriteria</th><th>Target</th><th class="n">Hasil</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Macro F1 di test set</td><td>&gt; 0,85</td><td class="n">0,868</td><td class="status-yes">Tercapai</td></tr>
+                <tr><td>F1 per kelas terendah</td><td>&ge; 0,70</td><td class="n">0,700 (residu)</td><td class="status-yes">Tercapai, tepat di batas</td></tr>
+                <tr><td>Ukuran model</td><td>&lt; 30 MB</td><td class="n">8,7 MB</td><td class="status-yes">Tercapai</td></tr>
+                <tr><td>Waktu inference</td><td>&lt; 1 detik</td><td class="n">belasan ms</td><td class="status-yes">Tercapai</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Keterbatasan</h3>
+            <ul class="lead-list">
+              <li><strong>Dataset kecil</strong> (2.521 foto), residu hanya 20 foto di test set sehingga angka per kelas punya ketidakpastian besar.</li>
+              <li><strong>Foto studio dengan latar seragam.</strong> Akurasi di tempat sampah sungguhan kemungkinan lebih rendah.</li>
+              <li><strong>Hanya satu objek per foto</strong>, belum bisa menangani tumpukan sampah campuran.</li>
+              <li><strong>Belum diuji di foto nyata</strong> dari kondisi Indonesia, dan rentan terhadap foto buram.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Pengembangan selanjutnya</h3>
+            <ul class="next-list" style="grid-template-columns:1fr">
+              <li><strong>Data foto nyata Indonesia</strong>Dari TPS, bank sampah, dan rumah tangga, dengan latar ramai dan kondisi kotor.</li>
+              <li><strong>Object detection</strong>Misalnya YOLO, untuk mengenali banyak sampah sekaligus dalam satu foto.</li>
+              <li><strong>Kelas baru</strong>Sampah organik, B3 (baterai, lampu, obat), dan elektronik.</li>
+              <li><strong>Augmentasi lebih kaya</strong>Blur, noise, dan penggantian latar supaya lebih tahan kondisi nyata.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <strong>Klasifikasi Sampah dengan Deep Learning</strong>
+        <div class="small muted">Proyek portofolio oleh Ebim &middot; <span id="year">2026</span> &middot; PyTorch, ONNX Runtime Web, Plotly</div>
+      </div>
+      <div class="footer-links">
+        <a class="btn btn-secondary" href="https://github.com/frgwnabim/DA-Garbage_Classification" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5a3.9 3.9 0 0 1 1-2.7 3.6 3.6 0 0 1 .1-2.7s.8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7a3.9 3.9 0 0 1 1 2.7c0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+          Repository GitHub
+        </a>
+        <a class="btn btn-secondary" href="https://github.com/frgwnabim/DA-Garbage_Classification/blob/main/notebook.ipynb" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h9l5 5v15H6V2Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
+          Notebook analisis
+        </a>
+        <a class="btn btn-primary" href="https://frgwnabim.site">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Kembali ke frgwnabim.site
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.wasm.min.js" defer></script>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
