@@ -1,0 +1,110 @@
+[
+  {
+    "file": "cardboard_1.jpg",
+    "label": "cardboard",
+    "source": "cardboard/cardboard128.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "paper",
+    "expected_confidence": 0.7999
+  },
+  {
+    "file": "cardboard_2.jpg",
+    "label": "cardboard",
+    "source": "cardboard/cardboard381.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "cardboard",
+    "expected_confidence": 1.0
+  },
+  {
+    "file": "glass_1.jpg",
+    "label": "glass",
+    "source": "glass/glass277.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "glass",
+    "expected_confidence": 0.9977
+  },
+  {
+    "file": "glass_2.jpg",
+    "label": "glass",
+    "source": "glass/glass95.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "glass",
+    "expected_confidence": 0.9981
+  },
+  {
+    "file": "metal_1.jpg",
+    "label": "metal",
+    "source": "metal/metal13.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "metal",
+    "expected_confidence": 0.9696
+  },
+  {
+    "file": "metal_2.jpg",
+    "label": "metal",
+    "source": "metal/metal362.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "metal",
+    "expected_confidence": 0.5504
+  },
+  {
+    "file": "paper_1.jpg",
+    "label": "paper",
+    "source": "paper/paper138.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "paper",
+    "expected_confidence": 0.9374
+  },
+  {
+    "file": "paper_2.jpg",
+    "label": "paper",
+    "source": "paper/paper382.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "paper",
+    "expected_confidence": 0.523
+  },
+  {
+    "file": "plastic_1.jpg",
+    "label": "plastic",
+    "source": "plastic/plastic415.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "plastic",
+    "expected_confidence": 0.9851
+  },
+  {
+    "file": "plastic_2.jpg",
+    "label": "plastic",
+    "source": "plastic/plastic42.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "plastic",
+    "expected_confidence": 0.9982
+  },
+  {
+    "file": "trash_1.jpg",
+    "label": "trash",
+    "source": "trash/trash30.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "trash",
+    "expected_confidence": 0.9603
+  },
+  {
+    "file": "trash_2.jpg",
+    "label": "trash",
+    "source": "trash/trash67.jpg",
+    "width": 400,
+    "height": 300,
+    "expected_prediction": "trash",
+    "expected_confidence": 0.9996
+  }
+]

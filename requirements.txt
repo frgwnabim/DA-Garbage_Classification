@@ -20,4 +20,5 @@ ipykernel==7.4.0
 # Export model dan interpretasi
 onnx==1.23.1
 onnxruntime==1.30.0
+onnxscript==0.7.2  # dibutuhkan exporter ONNX baru (torch.onnx.export dengan dynamo=True)
 grad-cam==1.5.7
