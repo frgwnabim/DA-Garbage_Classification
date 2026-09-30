@@ -1,5 +1,5 @@
 # Dataset dan hasil training (besar, tidak di-commit)
-data/
+/data/
 checkpoints/*
 !checkpoints/.gitkeep
 

@@ -1,0 +1,195 @@
+{
+  "split": "test",
+  "note": "Gangguan deterministik diterapkan sebelum resize/center crop. turun_akurasi = akurasi asli - akurasi dengan gangguan.",
+  "results": [
+    {
+      "gangguan": "Asli",
+      "key": "A",
+      "model": "CNN dari nol",
+      "accuracy": 0.6939313984168866,
+      "macro_f1": 0.6657480897056294,
+      "weighted_f1": 0.6904652258484381,
+      "turun_akurasi": 0.0
+    },
+    {
+      "gangguan": "Asli",
+      "key": "B",
+      "model": "MobileNetV2",
+      "accuracy": 0.8918205804749341,
+      "macro_f1": 0.8680765978668395,
+      "weighted_f1": 0.8917582077218098,
+      "turun_akurasi": 0.0
+    },
+    {
+      "gangguan": "Asli",
+      "key": "C",
+      "model": "ResNet50",
+      "accuracy": 0.9050131926121372,
+      "macro_f1": 0.8745000758359538,
+      "weighted_f1": 0.9035334242144877,
+      "turun_akurasi": 0.0
+    },
+    {
+      "gangguan": "Gelap (60%)",
+      "key": "A",
+      "model": "CNN dari nol",
+      "accuracy": 0.40105540897097625,
+      "macro_f1": 0.3901750866407578,
+      "weighted_f1": 0.3984044554682445,
+      "turun_akurasi": 0.2928759894459103
+    },
+    {
+      "gangguan": "Gelap (60%)",
+      "key": "B",
+      "model": "MobileNetV2",
+      "accuracy": 0.8707124010554089,
+      "macro_f1": 0.8530717390689587,
+      "weighted_f1": 0.8708862104172694,
+      "turun_akurasi": 0.02110817941952514
+    },
+    {
+      "gangguan": "Gelap (60%)",
+      "key": "C",
+      "model": "ResNet50",
+      "accuracy": 0.8970976253298153,
+      "macro_f1": 0.8656382805880929,
+      "weighted_f1": 0.8958711954623085,
+      "turun_akurasi": 0.0079155672823219
+    },
+    {
+      "gangguan": "Sangat gelap (35%)",
+      "key": "A",
+      "model": "CNN dari nol",
+      "accuracy": 0.18469656992084432,
+      "macro_f1": 0.1055746371077329,
+      "weighted_f1": 0.11045226500144319,
+      "turun_akurasi": 0.5092348284960422
+    },
+    {
+      "gangguan": "Sangat gelap (35%)",
+      "key": "B",
+      "model": "MobileNetV2",
+      "accuracy": 0.8680738786279684,
+      "macro_f1": 0.852592219508573,
+      "weighted_f1": 0.8675019507941794,
+      "turun_akurasi": 0.0237467018469657
+    },
+    {
+      "gangguan": "Sangat gelap (35%)",
+      "key": "C",
+      "model": "ResNet50",
+      "accuracy": 0.8944591029023746,
+      "macro_f1": 0.8657353795526235,
+      "weighted_f1": 0.8932206552492239,
+      "turun_akurasi": 0.01055408970976257
+    },
+    {
+      "gangguan": "Blur ringan (r=2)",
+      "key": "A",
+      "model": "CNN dari nol",
+      "accuracy": 0.5620052770448549,
+      "macro_f1": 0.5307492551400259,
+      "weighted_f1": 0.5524914524492192,
+      "turun_akurasi": 0.13192612137203164
+    },
+    {
+      "gangguan": "Blur ringan (r=2)",
+      "key": "B",
+      "model": "MobileNetV2",
+      "accuracy": 0.8390501319261213,
+      "macro_f1": 0.8243232324006247,
+      "weighted_f1": 0.8383722691586135,
+      "turun_akurasi": 0.05277044854881274
+    },
+    {
+      "gangguan": "Blur ringan (r=2)",
+      "key": "C",
+      "model": "ResNet50",
+      "accuracy": 0.8733509234828496,
+      "macro_f1": 0.8373958642199831,
+      "weighted_f1": 0.8709392236960265,
+      "turun_akurasi": 0.0316622691292876
+    },
+    {
+      "gangguan": "Blur berat (r=5)",
+      "key": "A",
+      "model": "CNN dari nol",
+      "accuracy": 0.39841688654353563,
+      "macro_f1": 0.3586919704131717,
+      "weighted_f1": 0.3524173675099287,
+      "turun_akurasi": 0.2955145118733509
+    },
+    {
+      "gangguan": "Blur berat (r=5)",
+      "key": "B",
+      "model": "MobileNetV2",
+      "accuracy": 0.6253298153034301,
+      "macro_f1": 0.5991150571823093,
+      "weighted_f1": 0.6217263460533679,
+      "turun_akurasi": 0.26649076517150394
+    },
+    {
+      "gangguan": "Blur berat (r=5)",
+      "key": "C",
+      "model": "ResNet50",
+      "accuracy": 0.783641160949868,
+      "macro_f1": 0.7378042837698975,
+      "weighted_f1": 0.7806513648524073,
+      "turun_akurasi": 0.12137203166226918
+    },
+    {
+      "gangguan": "Rotasi 30 derajat",
+      "key": "A",
+      "model": "CNN dari nol",
+      "accuracy": 0.6912928759894459,
+      "macro_f1": 0.6434421230245092,
+      "weighted_f1": 0.685213528408394,
+      "turun_akurasi": 0.0026385224274406704
+    },
+    {
+      "gangguan": "Rotasi 30 derajat",
+      "key": "B",
+      "model": "MobileNetV2",
+      "accuracy": 0.8839050131926122,
+      "macro_f1": 0.8584272166091008,
+      "weighted_f1": 0.882666746201941,
+      "turun_akurasi": 0.0079155672823219
+    },
+    {
+      "gangguan": "Rotasi 30 derajat",
+      "key": "C",
+      "model": "ResNet50",
+      "accuracy": 0.8891820580474934,
+      "macro_f1": 0.8577953174550896,
+      "weighted_f1": 0.8871592339731309,
+      "turun_akurasi": 0.0158311345646438
+    },
+    {
+      "gangguan": "Rotasi 90 derajat",
+      "key": "A",
+      "model": "CNN dari nol",
+      "accuracy": 0.6886543535620053,
+      "macro_f1": 0.6327142168388723,
+      "weighted_f1": 0.6816848529654914,
+      "turun_akurasi": 0.00527704485488123
+    },
+    {
+      "gangguan": "Rotasi 90 derajat",
+      "key": "B",
+      "model": "MobileNetV2",
+      "accuracy": 0.8575197889182058,
+      "macro_f1": 0.8330704923141629,
+      "weighted_f1": 0.8565521141872361,
+      "turun_akurasi": 0.03430079155672827
+    },
+    {
+      "gangguan": "Rotasi 90 derajat",
+      "key": "C",
+      "model": "ResNet50",
+      "accuracy": 0.8944591029023746,
+      "macro_f1": 0.869103207834346,
+      "weighted_f1": 0.8928735096790299,
+      "turun_akurasi": 0.01055408970976257
+    }
+  ]
+}
