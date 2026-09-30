@@ -1,0 +1,44 @@
+{
+  "split": "test",
+  "n_test_images": 379,
+  "selected_model": {
+    "key": "B",
+    "model": "MobileNetV2",
+    "checkpoint": "checkpoints/b_mobilenet_v2.pt"
+  },
+  "models": {
+    "A": {
+      "model": "CNN dari nol",
+      "accuracy": 0.6939313984168866,
+      "macro_f1": 0.6657480897056294,
+      "weighted_f1": 0.6904652258484381,
+      "total_params": 1174758,
+      "size_mb": 4.504712104797363,
+      "gpu_ms": 0.884805999994569,
+      "cpu_ms": 14.291551999995136,
+      "val_macro_f1": 0.656734737937749
+    },
+    "B": {
+      "model": "MobileNetV2",
+      "accuracy": 0.8918205804749341,
+      "macro_f1": 0.8680765978668395,
+      "weighted_f1": 0.8917582077218098,
+      "total_params": 2231558,
+      "size_mb": 8.74555492401123,
+      "gpu_ms": 4.4619260000035865,
+      "cpu_ms": 10.943441999988863,
+      "val_macro_f1": 0.8806712990873606
+    },
+    "C": {
+      "model": "ResNet50",
+      "accuracy": 0.9050131926121372,
+      "macro_f1": 0.8745000758359538,
+      "weighted_f1": 0.9035334242144877,
+      "total_params": 23520326,
+      "size_mb": 90.02575588226318,
+      "gpu_ms": 4.176709999992454,
+      "cpu_ms": 31.576640000021147,
+      "val_macro_f1": 0.878961636530406
+    }
+  }
+}
